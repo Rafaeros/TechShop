@@ -19,6 +19,6 @@ jobs:
           file: ./src/Dockerfile
           push: true
           tags: |
-           rafaeros/live-TechShop:v1
-           rafaeros/live-TechShop:latest
+           rafaeros/live-techshop:v1
+           rafaeros/live-techshop:latest
       
