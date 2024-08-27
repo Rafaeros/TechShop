@@ -1,8 +1,7 @@
-FROM node:19.5.0-alpine
+FROM node:20.17.0-alpine3.19
 WORKDIR /app
 COPY package*.json ./
-COPY package-lock*.json ./
-RUN npm i
+RUN npm install
 COPY . ./
 EXPOSE 8080
 CMD ["npm", "start"]
