@@ -5,10 +5,10 @@ const port = 3000;
 
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/public', 'index.html'));
+  res.sendFile(path.join(__dirname, '/views', 'index.html'));
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/views')));
 
 app.listen(port, () => {
   console.log("Listen on port: 3000")
