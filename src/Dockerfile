@@ -1,7 +1,7 @@
-FROM node:20.15.1
+FROM node:20.17.0
 WORKDIR /public
 COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 8080
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

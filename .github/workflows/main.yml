@@ -21,4 +21,3 @@ jobs:
           tags: |
            rafaeros/live-techshop:v1
            rafaeros/live-techshop:latest
-      
