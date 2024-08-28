@@ -4,12 +4,16 @@ on:
   push:
     branches: ["main"]
 
+  pull_request:
+    branches: ["main"]
+
 jobs:
-  CI:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.1.7
+      - name: Checando Código
+        uses: actions/checkout@v4.1.7
 
       - name: Autenticação no Docker Hub
         uses: docker/login-action@v3.3.0
@@ -26,3 +30,49 @@ jobs:
           tags: |
            rafaeros/live-techshop:v1
            rafaeros/live-techshop:latest
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checando Código
+        uses: actions/checkout@4.1.7
+      - name: Configurando Node
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: 20.x
+      - name: npm install e npm test
+        run: |
+          npm install
+          npm test
+
+  deploy_dev:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Deploy to Development
+        env:
+          SERVER_HOST: ${{ secrets.DEV_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.DEV_SERVER_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "${SSH_PRIVATE_KEY}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -r ./build ${{ env.DEV_SERVER_USER }}@${{ env.DEV_SERVER_HOST }}:/var/www/html/
+          rm private_key.pem
+
+  deploy_prod:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Deploy to Development
+        env:
+          SERVER_HOST: ${{ secrets.PROD_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.PROD_SERVER_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "${SSH_PRIVATE_KEY}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -r ./build ${{ env.PROD_SERVER_USER }}@${{ env.PROD_SERVER_HOST }}:/var/www/html/
+          rm private_key.pem
